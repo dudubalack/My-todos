@@ -1,78 +1,44 @@
-import React, { useEffect, useRef, useState } from "react";
-
-
-
+import React, { useState } from "react";
 
 
 //create your first component
 const Home = () => {
+    
+    const [inputValue, setInputValue] = useState ("");
+    const [todos, setTodos] = useState ([]);
 
-    const [tasks, setTasks] = useState([]) 
-    const [list, setList] = useState([])
-	const inputRef = useRef();
+    //Add into array => concat
+    //Delete fron array => filter
+    //Update => map
 
-	const onAddButtonClick = (e) => {
-		e.preventDefault();
-
-		const taskTitle = inputRef.current.value;
-		 if (taskTitle === ""){return} 
-		setTasks([...tasks, taskTitle]); 
-		inputRef.current.value = ""; 
-	}
-	const onDeleteButtonClick = (position) => { 
-		tasks.splice(position,1); 
-		setTasks([...tasks])
-	}
-
-
-    const carga =async ()=>{
-       await fetch('https://assets.breatheco.de/apis/fake/todos/user/dudubalack')
-          .then(resp => {
-              console.log(resp.ok); // will be true if the response is successfull
-              console.log(resp.status); // the status code = 200 or code = 400 etc.
-              
-              return resp.json(); // (returns promise) will try to parse the result as json as return a promise that you can .then for results
-          })
-          .then(data => {
-              //here is were your code should start after the fetch finishes
-              console.log(data); //this will print on the console the exact object received from the server
-              setList(data)
-
-          })
-          .catch(error => {
-              //error handling
-              console.log(error);
-          });
-    }
-
-    useEffect (()=>{
-        carga()
-    },[])
-
-    useEffect (()=>{
-        console.log(list)
-    },[list])
-
-
-
-
-
-
-
-	return (
+    return (
         <div className="container">
-            <h1>Todos</h1> 
-            <form onSubmit={onAddButtonClick} className="input-group mb-3">
-                <input ref={inputRef} type="text" className="form-control" aria-label="Text input with segmented dropdown button" />
-            </form>
-
-            {tasks.length === 0
-            ? (<span>No hay tareas, añadir tareas</span>) 
-            : tasks.map((taskElement, i) => { 
-                return ( <li key ={i}>{taskElement}<button type="button" className="btn-close" aria-label="Delete" onClick={() => onDeleteButtonClick(i)}>X</button></li> ) 
-              })
-            }
+            <h1>My todos</h1>
+            <ul>
+                <li>
+                    <input
+                        type="text"
+                        onChange={(e) =>setInputValue(e.target.value)}
+                        value={inputValue}
+                        OnKeyPress={(e) => {
+                            if (e.key === "Enter"){
+                                setTodos(todos.contat([inputValue]));
+                                setInputValue("");
+                            }
+                        }}
+                        placeholder="Wath do you need to do?"></input>
+                </li>
+                {todos.map((item, index) => (
+                    <li>
+                        {item} lista de tareas <i class="fas fa-trash-alt" onClick={() => setTodos(
+                            todos .filter((t, currentIndex) => index != currentIndex)
+                        )}></i>
+                    </li>
+                ))}
+            </ul> 
+            <div>{todos.length} tasks </div>
         </div>
+            
     );
 };
 
